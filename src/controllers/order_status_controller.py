@@ -2,7 +2,7 @@ import uuid
 
 from fastapi import APIRouter
 
-from src.adapters.order_json_adapter import order_status_list_to_json, order_status_to_json
+from src.adapters.order_json_adapter import order_status_list_to_json, order_status_to_json, order_with_qrcode_to_json
 from src.config.errors import RepositoryError, ResourceNotFound, DomainError
 from src.entities.errors.order_status_error import OrderStatusError
 from src.entities.schemas.order_status_dto import CreateOrderStatusDTO
@@ -95,20 +95,21 @@ class OrderStatusController:
         try:
             order = OrderStatusUseCase(order_status_gateway).confirm_order(order_id)
             result = order_with_qrcode_to_json(order, qr_code)
-
-        except Exception:
+        except Exception as e:
+            print(e)
             raise RepositoryError.save_operation_failed()
 
         return {"result": result}
 
     @staticmethod
     async def change_order_status_in_progress(
-        order_id: uuid.UUID
+        order_id: uuid.UUID,
+        payment_status: str
     ) -> dict:
         order_status_gateway = PostgresDBOrderStatusRepository()
 
         try:
-            order = OrderStatusUseCase(order_status_gateway).change_order_status_in_progress(order_id)
+            order = OrderStatusUseCase(order_status_gateway).change_order_status_in_progress(order_id, payment_status)
             result = order_status_to_json(order)
         except Exception:
             raise RepositoryError.save_operation_failed()

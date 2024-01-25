@@ -5,7 +5,7 @@ import httpx
 from fastapi import APIRouter, status
 
 from src.api.errors.api_errors import APIErrorMessage
-from src.config.config import Settings
+from src.config.config import Settings, settings
 from src.config.errors import RepositoryError, ResourceNotFound, DomainError
 from src.controllers.order_status_controller import OrderStatusController
 from src.entities.errors.order_status_error import OrderStatusError
@@ -122,8 +122,6 @@ async def confirm_order(
     order_id: uuid.UUID
 ) -> dict:
     try:
-        order = await OrderStatusController.get_order_by_id(order_id)
-
         headers = {
             # "Authorization": f"Bearer {access_token}",
         }
@@ -132,17 +130,15 @@ async def confirm_order(
             "order_id": str(order_id)
         }
 
-        r = httpx.post(f"{Settings.PAYMENTS_SERVICE}/mercado-pago", headers=headers, json=params)
+        r = httpx.post(f"{settings.PAYMENTS_SERVICE}/payments/mercado-pago", headers=headers, json=params)
         json_response = json.loads(r.content)
-        print(json_response["result"])
+        qr_code = json_response["result"]["qrCode"]
 
-        # result = await OrderStatusController.confirm_order(order_id, qr_code)
-    except Exception as er:
-        print(er)
+        result = await OrderStatusController.confirm_order(order_id, qr_code)
+    except Exception:
         raise RepositoryError.save_operation_failed()
 
-    return order
-    # return result
+    return result
 
 
 @router.put(
@@ -157,7 +153,15 @@ async def order_in_progress(
     order_id: uuid.UUID
 ) -> dict:
     try:
-        result = await OrderStatusController.change_order_status_in_progress(order_id)
+        headers = {
+            # "Authorization": f"Bearer {access_token}",
+        }
+
+        r = httpx.get(f"{settings.PAYMENTS_SERVICE}/payments/id/{order_id}", headers=headers)
+        json_response = json.loads(r.content)
+        payment_status = json_response["result"]["paymentStatus"]
+
+        result = await OrderStatusController.change_order_status_in_progress(order_id, payment_status)
     except Exception:
         raise RepositoryError.save_operation_failed()
 

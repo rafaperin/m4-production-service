@@ -44,9 +44,9 @@ class OrderStatusUseCase(OrderStatusUseCaseInterface):
         updated_order_status = self._order_status_repo.update(order_id, order_status)
         return updated_order_status
 
-    def change_order_status_in_progress(self, order_id: uuid.UUID) -> OrderStatus:
+    def change_order_status_in_progress(self, order_id: uuid.UUID, payment_status: str) -> OrderStatus:
         order_status = self._order_status_repo.get_by_id(order_id)
-        order_status.order_in_progress()
+        order_status.order_in_progress(payment_status)
         updated_order_status = self._order_status_repo.update(order_id, order_status)
         return updated_order_status
 

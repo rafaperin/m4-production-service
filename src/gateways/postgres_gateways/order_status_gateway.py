@@ -68,10 +68,9 @@ class PostgresDBOrderStatusRepository(IOrderStatusGateway):
 
             if orders:
                 for order in orders:
-                    items_db = db.query(Order_Items).filter(Order_Items.order_id == order.order_id).all()  # type: ignore
-                    items = self.items_to_entity(items_db)  # type: ignore
-                    order_entity = self.order_to_entity(order, items)  # type: ignore
+                    order_entity = self.to_entity(order)  # type: ignore
                     result.append(order_entity)
+
         return result
 
     def create_order_status(self, obj_in: OrderStatus) -> OrderStatus:
@@ -98,7 +97,7 @@ class PostgresDBOrderStatusRepository(IOrderStatusGateway):
             db.commit()
             db.refresh(db_obj)
 
-        updated_order = self.to_entity(db_obj, items)  # type: ignore
+        updated_order = self.to_entity(db_obj)  # type: ignore
         return updated_order
 
     def remove_order_status(self, order_id: uuid.UUID) -> None:

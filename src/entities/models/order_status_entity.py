@@ -14,6 +14,12 @@ class Status:
     FINALIZED = "Finalizado"
 
 
+class PaymentStatus:
+    PENDING = "Pendente"
+    CONFIRMED = "Confirmado"
+    REFUSED = "Negado"
+
+
 @dataclass
 class OrderStatus:
     order_id: uuid.UUID
@@ -32,13 +38,20 @@ class OrderStatus:
         if self.order_status != Status.PENDING:
             raise OrderStatusError("Order already confirmed, modification not allowed!")
 
+    @staticmethod
+    def check_payment_status(payment_status: str) -> None:
+        if payment_status == PaymentStatus.PENDING:
+            raise OrderStatusError("Order payment id pending!")
+        if payment_status == PaymentStatus.REFUSED:
+            raise OrderStatusError("Order payment was refused! Please contact your payment provider.")
+
     def confirm_order(self) -> None:
         self.check_if_pending_order()
         self.order_status = Status.CONFIRMED
 
-    def order_in_progress(self) -> None:
+    def order_in_progress(self, payment_status: str) -> None:
         if self.order_status == Status.CONFIRMED:
-            self.check_payment_status()
+            self.check_payment_status(payment_status)
             self.order_status = Status.IN_PROGRESS
         elif self.order_status == Status.PENDING:
             raise OrderStatusError("Order not yet confirmed!")

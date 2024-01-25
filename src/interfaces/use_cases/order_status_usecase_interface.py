@@ -28,7 +28,7 @@ class OrderStatusUseCaseInterface(ABC):
     def confirm_order(self, order_id: uuid.UUID) -> OrderStatus:
         pass
 
-    def change_order_status_in_progress(self, order_id: uuid.UUID) -> OrderStatus:
+    def change_order_status_in_progress(self, order_id: uuid.UUID, payment_status: str) -> OrderStatus:
         pass
 
     def change_order_status_ready(self, order_id: uuid.UUID) -> OrderStatus:
