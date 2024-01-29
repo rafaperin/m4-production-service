@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:604623258149:task-definition/m4-production:2",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:604623258149:task-definition/m4-production:4",
     "containerDefinitions": [
         {
             "name": "m4-production-1",
-            "image": "604623258149.dkr.ecr.us-east-1.amazonaws.com/m4-production:latest",
+            "image": "604623258149.dkr.ecr.us-east-1.amazonaws.com/m4-production:dc6272f7fc277ab398cadd2311523a262ff1aafa",
             "cpu": 1024,
             "memory": 1024,
             "memoryReservation": 1024,
@@ -28,7 +28,7 @@
                 },
                 {
                     "name": "PAYMENTS_SERVICE",
-                    "value": "m4-payments-alb-1685891886.us-east-1.elb.amazonaws.com:8002"
+                    "value": "http://m4-payments-alb-1685891886.us-east-1.elb.amazonaws.com:8002"
                 },
                 {
                     "name": "POSTGRES_HOST",
@@ -48,7 +48,7 @@
                 },
                 {
                     "name": "ORDERS_SERVICE",
-                    "value": "m4-orders-alb-1304370311.us-east-1.elb.amazonaws.com:8003"
+                    "value": "http://m4-orders-alb-1304370311.us-east-1.elb.amazonaws.com:8003"
                 },
                 {
                     "name": "POSTGRES_DB",
@@ -72,7 +72,7 @@
     "taskRoleArn": "arn:aws:iam::604623258149:role/my-ecs-execution-role",
     "executionRoleArn": "arn:aws:iam::604623258149:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 2,
+    "revision": 4,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -121,7 +121,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-01-29T00:06:48.098Z",
+    "registeredAt": "2024-01-29T21:11:27.807Z",
     "registeredBy": "arn:aws:iam::604623258149:root",
     "tags": []
 }
